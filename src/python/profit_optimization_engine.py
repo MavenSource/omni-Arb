@@ -7,6 +7,11 @@ import asyncio
 from typing import Dict, List
 
 
+# Optimization constants
+TRADES_PER_DAY_TARGET = 100  # Target number of profitable trades per day
+HOURS_IN_WEEK = 168  # 24 hours * 7 days for weekly optimization
+
+
 class TimeSeriesDatabase:
     """Time series database for profit tracking"""
     def __init__(self):
@@ -89,13 +94,14 @@ class ProfitOptimizationEngine:
             success_rates.append(performance_data['success_rate'])
             
             # Weekly optimization cycle
-            if len(daily_profits) % 168 == 0:  # Weekly (24*7)
+            if len(daily_profits) % HOURS_IN_WEEK == 0:  # Weekly (24*7)
                 await self._run_weekly_optimization(
                     daily_profits, success_rates
                 )
                 
             # Real-time micro-optimizations
-            if performance_data['profit_per_trade'] < self._calculate_target_profit()['daily_target'] / 100:
+            target_profit_per_trade = self._calculate_target_profit()['daily_target'] / TRADES_PER_DAY_TARGET
+            if performance_data['profit_per_trade'] < target_profit_per_trade:
                 await self._adjust_trading_parameters()
                 
             await asyncio.sleep(3600)  # Check hourly

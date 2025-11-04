@@ -8,6 +8,10 @@ import time
 from typing import Dict, List, Optional
 
 
+# Flash loan fee constants
+DEFAULT_FLASH_LOAN_FEE = 0.0009  # 0.09% default fee (Aave)
+
+
 class EthereumManager:
     """Ethereum blockchain manager"""
     def __init__(self):
@@ -105,7 +109,7 @@ class MultiChainArbitrageCoordinator:
         return {
             'chain': chain,
             'amount': amount,
-            'fee': amount * 0.0009  # 0.09% fee
+            'fee': amount * DEFAULT_FLASH_LOAN_FEE
         }
     
     async def _execute_on_chain(self, chain: str, opportunity: Dict) -> Dict:

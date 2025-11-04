@@ -7,6 +7,11 @@ from typing import List, Dict, Optional
 import asyncio
 
 
+# ML model constants
+PROFIT_REALIZATION_FACTOR = 0.8  # 80% expected profit realization (accounting for slippage, fees, etc.)
+CONFIDENCE_LEVEL = 0.75  # 75% prediction confidence
+
+
 class RiskAssessmentModel:
     """Risk assessment model for opportunities"""
     def __init__(self):
@@ -106,7 +111,7 @@ class MockProfitPredictor:
         predictions = []
         for feature in features:
             predictions.append({
-                'expected_profit': feature.get('profit_potential', 0) * 0.8,
-                'confidence': 0.75
+                'expected_profit': feature.get('profit_potential', 0) * PROFIT_REALIZATION_FACTOR,
+                'confidence': CONFIDENCE_LEVEL
             })
         return predictions

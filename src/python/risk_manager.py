@@ -7,6 +7,12 @@ from typing import Dict, Optional
 import asyncio
 
 
+# Risk calculation constants
+BASE_SLIPPAGE = 0.001  # 0.1% base slippage
+SLIPPAGE_SCALE_THRESHOLD = 100000  # Trade size threshold for scaling
+PROFIT_MULTIPLIER = 0.8  # 80% expected profit realization
+
+
 class SlippagePredictor:
     """Predicts slippage for trades"""
     def __init__(self):
@@ -16,9 +22,8 @@ class SlippagePredictor:
         """Predict slippage for a given trade"""
         # Placeholder implementation
         await asyncio.sleep(0.001)
-        base_slippage = 0.001  # 0.1%
-        size_factor = trade_size / 100000  # Scale with size
-        return base_slippage * (1 + size_factor)
+        size_factor = trade_size / SLIPPAGE_SCALE_THRESHOLD  # Scale with size
+        return BASE_SLIPPAGE * (1 + size_factor)
 
 
 class VolatilityMonitor:

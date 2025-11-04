@@ -7,6 +7,11 @@ import asyncio
 from typing import Dict, List, Optional
 
 
+# Alert threshold constants
+MIN_SUCCESS_RATE = 0.95  # 95% minimum success rate
+MIN_PROFIT_PER_HOUR = 1000  # $1000 minimum profit per hour
+
+
 class KubernetesCluster:
     """Kubernetes cluster management"""
     def __init__(self):
@@ -115,15 +120,15 @@ class EnterpriseInfrastructure:
         while True:
             health_metrics = await self._collect_metrics()
             
-            if health_metrics['success_rate'] < 0.95:
+            if health_metrics['success_rate'] < MIN_SUCCESS_RATE:
                 await self.alert_system.send_alert(
-                    "CRITICAL: Success rate below 95%",
+                    f"CRITICAL: Success rate below {MIN_SUCCESS_RATE*100}%",
                     severity='CRITICAL'
                 )
                 
-            if health_metrics['profit_per_hour'] < 1000:
+            if health_metrics['profit_per_hour'] < MIN_PROFIT_PER_HOUR:
                 await self.alert_system.send_alert(
-                    "WARNING: Profit rate below $1000/hour",
+                    f"WARNING: Profit rate below ${MIN_PROFIT_PER_HOUR}/hour",
                     severity='WARNING'
                 )
                 
