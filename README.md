@@ -109,6 +109,28 @@ To enable automatic trade execution:
 
 ⚠️ **Warning**: Trading mode will execute real transactions. Start with small amounts and test thoroughly.
 
+### Demo Mode
+
+Run the interactive demonstration to see how the system works without blockchain connectivity:
+
+```bash
+python demo.py
+```
+
+This demo shows:
+- Configuration management
+- Utility functions (token conversions, profit calculations)
+- Arbitrage detection logic
+- Gas cost analysis
+
+### Running Tests
+
+Execute the test suite to verify the system:
+
+```bash
+python tests/run_tests.py
+```
+
 ## 🏗️ Project Structure
 
 ```
@@ -127,11 +149,17 @@ omni-Arb/
 │   └── utils/
 │       ├── logger.py          # Logging utilities
 │       └── web3_utils.py      # Web3 helper functions
+├── tests/
+│   ├── test_config.py         # Configuration tests
+│   ├── test_utils.py          # Utility function tests
+│   └── run_tests.py           # Test runner
 ├── config/
 │   └── config.yaml            # Main configuration file
 ├── main.py                    # Application entry point
+├── demo.py                    # Interactive demonstration
 ├── requirements.txt           # Python dependencies
 ├── .env.example              # Environment variables template
+├── LICENSE                   # MIT License
 └── README.md                 # This file
 ```
 
