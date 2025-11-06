@@ -1,211 +1,228 @@
-# omni-Arb: Seven-Figure Arbitrage System
+# Omni-Arb: Multi-Chain DeFi Arbitrage System
 
-A comprehensive, institutional-grade arbitrage system designed for multi-chain profit extraction with advanced AI-powered optimization, ultra-low latency execution, and enterprise infrastructure.
+A sophisticated DeFi arbitrage bot that detects and executes profitable trading opportunities across multiple decentralized exchanges (DEXes) and blockchain networks.
 
-## 🏗️ Architecture Overview
+## 🌟 Features
 
-This system implements a hybrid architecture combining:
-- **Rust**: Core execution engine (speed-critical components)
-- **Python**: AI/ML models, data processing, strategy development
-- **TypeScript**: Frontend monitoring and alerting
+- **Multi-Chain Support**: Monitor arbitrage opportunities across Ethereum, BSC, and Polygon
+- **Multiple DEX Integration**: Support for Uniswap V2, SushiSwap, and PancakeSwap
+- **Real-time Price Monitoring**: Continuous scanning of token prices across DEXes
+- **Smart Arbitrage Detection**: Automated detection of profitable price differences
+- **Gas Cost Analysis**: Evaluates profitability after accounting for gas fees
+- **Configurable Parameters**: Easily adjust profit thresholds, slippage, and more
+- **Comprehensive Logging**: Color-coded logging for easy monitoring
 
-### Core Components
+## 📋 Prerequisites
 
-1. **Ultra-Low Latency Execution System** - Sub-millisecond opportunity detection
-2. **Advanced Multi-Chain Coordination** - Cross-chain arbitrage with flash loans
-3. **AI-Powered Profit Maximization** - ML-driven profit optimization
-4. **Risk Management & Capital Efficiency** - Comprehensive risk assessment
-5. **Institutional-Grade Infrastructure** - High-availability deployment
-6. **Profit Tracking & Optimization** - Continuous performance optimization
+- Python 3.8 or higher
+- Access to RPC endpoints for supported networks (Infura, Alchemy, or public RPCs)
+- (Optional) Private key for executing trades
 
-## 🎯 Key Performance Indicators
+## 🚀 Installation
 
-```python
-KPIS = {
-    'daily_profit': 33333,      # $1M monthly target
-    'success_rate': 0.95,       # 95% success rate
-    'execution_time': 0.1,      # 100ms max execution
-    'capital_turnover': 5,      # 5x daily turnover
-    'max_drawdown': 0.05,       # 5% maximum drawdown
-    'sharpe_ratio': 3.0,        # Excellent risk-adjusted returns
-}
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/MavenSource/omni-Arb.git
+   cd omni-Arb
+   ```
 
-## 📋 Requirements
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-- Python 3.8+
-- Node.js 16+ (for TypeScript components)
-- Rust 1.70+ (for execution engine)
-- Docker & Kubernetes (for production deployment)
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-## 🚀 Quick Start
+4. **Review and update configuration**
+   ```bash
+   # Edit config/config.yaml to customize settings
+   ```
 
-### Installation
+## ⚙️ Configuration
 
-```bash
-# Clone the repository
-git clone https://github.com/MavenSource/omni-Arb.git
-cd omni-Arb
+### Environment Variables (.env)
 
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Run tests
-pytest tests/ -v
-```
-
-### Configuration
-
-Edit `config/system_config.json` to configure:
-- Blockchain RPC endpoints
-- Flash loan providers
-- Risk management parameters
-- Profit targets
-- Infrastructure settings
-
-### Running the System
-
-```python
-from src.python.system_architecture import SystemArchitecture
-from src.python.ultra_low_latency_engine import UltraLowLatencyEngine
-from src.python.multi_chain_coordinator import MultiChainArbitrageCoordinator
-
-# Initialize system
-system = SystemArchitecture()
-engine = UltraLowLatencyEngine()
-coordinator = MultiChainArbitrageCoordinator()
-
-# Start monitoring and execution
-import asyncio
-asyncio.run(engine.monitor_mempools())
-```
-
-## 📊 System Components
-
-### 1. Ultra-Low Latency Engine
-- Real-time mempool monitoring across Ethereum, BSC, Polygon, Arbitrum, Optimism
-- Sub-millisecond opportunity detection
-- Parallel DEX scanning
-- Intelligent filtering (>$1000 profit, >85% success rate, >5x gas ROI)
-
-### 2. Multi-Chain Coordinator
-- Flash loan integration (Aave, dYdX, Compound)
-- Cross-chain bridge coordination
-- Parallel execution across multiple chains
-- Automatic profit calculation and loan repayment
-
-### 3. AI Profit Maximizer
-- Machine learning profit prediction
-- Dynamic capital allocation
-- Risk-adjusted opportunity ranking
-- Continuous model optimization
-
-### 4. Risk Manager
-- Slippage prediction
-- Volatility monitoring
-- Liquidity risk assessment
-- Circuit breaker system
-- Composite risk scoring
-
-### 5. Enterprise Infrastructure
-- Kubernetes cluster management
-- Multi-region deployment
-- Auto-scaling (3-20 replicas)
-- Prometheus/Grafana monitoring
-- Multi-channel alerting
-
-### 6. Profit Optimization Engine
-- Time-series profit tracking
-- Performance analysis
-- Continuous optimization
-- Weekly optimization cycles
-- Real-time parameter adjustment
-
-## 🔒 Risk Management
-
-### Circuit Breakers
-- Max loss per trade: $10,000
-- Max daily loss: $50,000
-- Min success rate: 80%
-
-### Risk Factors Monitored
-- Slippage risk
-- Volatility risk
-- Liquidity risk
-- Execution risk
-
-## 📈 Implementation Roadmap
-
-### Phase 1: Foundation (Weeks 1-4)
-- ✅ Set up basic multi-chain monitoring
-- ✅ Implement core execution engine
-- ✅ Establish risk management framework
-- **Target**: $10k-$50k monthly profit
-
-### Phase 2: Scaling (Weeks 5-12)
-- ✅ Integrate AI/ML prediction models
-- ✅ Implement advanced capital allocation
-- ✅ Deploy high-availability infrastructure
-- **Target**: $100k-$500k monthly profit
-
-### Phase 3: Optimization (Months 4-6)
-- Fine-tune execution algorithms
-- Implement institutional features
-- Expand to additional chains and protocols
-- **Target**: $500k-$1M+ monthly profit
-
-## 🧪 Testing
+Create a `.env` file based on `.env.example`:
 
 ```bash
-# Run all tests
-pytest tests/ -v
+# Private key for trade execution (optional for monitoring only)
+PRIVATE_KEY=your_private_key_here
 
-# Run specific test module
-pytest tests/test_system_architecture.py -v
+# Custom RPC URLs (optional)
+ETH_RPC_URL=https://mainnet.infura.io/v3/YOUR_API_KEY
+BSC_RPC_URL=https://bsc-dataseed.binance.org/
+POLYGON_RPC_URL=https://polygon-rpc.com
 
-# Run with coverage
-pytest tests/ --cov=src/python --cov-report=html
+# Trading parameters
+MIN_PROFIT_PCT=0.5
+MAX_TRADE_USD=1000
+GAS_MULTIPLIER=1.1
+
+# Monitoring
+CHECK_INTERVAL=5
+LOG_LEVEL=INFO
 ```
 
-## 📁 Project Structure
+### Configuration File (config/config.yaml)
+
+The main configuration file contains:
+
+- **Network settings**: RPC URLs and chain IDs
+- **DEX configurations**: Router and factory addresses
+- **Trading parameters**: Profit thresholds, slippage tolerance
+- **Monitoring settings**: Check intervals and logging levels
+
+## 📖 Usage
+
+### Monitoring Mode (Read-Only)
+
+Run the bot in monitoring mode to detect opportunities without executing trades:
+
+```bash
+python main.py
+```
+
+This mode:
+- Connects to configured blockchain networks
+- Monitors token prices across multiple DEXes
+- Detects arbitrage opportunities
+- Calculates potential profits
+- Does NOT execute trades (safe for testing)
+
+### Trading Mode (Requires Private Key)
+
+To enable automatic trade execution:
+
+1. Add your private key to the `.env` file:
+   ```bash
+   PRIVATE_KEY=your_private_key_here
+   ```
+
+2. Run the bot:
+   ```bash
+   python main.py
+   ```
+
+⚠️ **Warning**: Trading mode will execute real transactions. Start with small amounts and test thoroughly.
+
+### Demo Mode
+
+Run the interactive demonstration to see how the system works without blockchain connectivity:
+
+```bash
+python demo.py
+```
+
+This demo shows:
+- Configuration management
+- Utility functions (token conversions, profit calculations)
+- Arbitrage detection logic
+- Gas cost analysis
+
+### Running Tests
+
+Execute the test suite to verify the system:
+
+```bash
+python tests/run_tests.py
+```
+
+## 🏗️ Project Structure
 
 ```
 omni-Arb/
 ├── src/
-│   ├── python/          # Python AI/ML and coordination layer
-│   ├── rust/            # Rust execution engine (future)
-│   └── typescript/      # TypeScript monitoring dashboard (future)
-├── tests/               # Comprehensive test suite
-├── config/              # System configuration
-├── models/              # ML models (future)
-├── requirements.txt     # Python dependencies
-└── README.md           # This file
+│   ├── core/
+│   │   ├── blockchain.py      # Blockchain connection management
+│   │   ├── arbitrage.py       # Arbitrage opportunity detection
+│   │   └── executor.py        # Trade execution logic
+│   ├── dex/
+│   │   ├── base_dex.py        # Base DEX interface
+│   │   ├── uniswap_v2.py      # Uniswap V2 compatible DEXes
+│   │   └── dex_manager.py     # DEX management
+│   ├── config/
+│   │   └── config.py          # Configuration management
+│   └── utils/
+│       ├── logger.py          # Logging utilities
+│       └── web3_utils.py      # Web3 helper functions
+├── tests/
+│   ├── test_config.py         # Configuration tests
+│   ├── test_utils.py          # Utility function tests
+│   └── run_tests.py           # Test runner
+├── config/
+│   └── config.yaml            # Main configuration file
+├── main.py                    # Application entry point
+├── demo.py                    # Interactive demonstration
+├── requirements.txt           # Python dependencies
+├── .env.example              # Environment variables template
+├── LICENSE                   # MIT License
+└── README.md                 # This file
 ```
 
-## 🔐 Security Considerations
+## 🔧 Key Components
 
-⚠️ **IMPORTANT**: This system is designed for educational and research purposes. 
+### 1. Blockchain Connector
+Manages connections to multiple blockchain networks and provides Web3 interfaces.
 
-Before deploying to production:
-1. Conduct thorough security audits
-2. Use secure key management (HSM, KMS)
-3. Implement proper monitoring and alerting
-4. Test extensively on testnets
-5. Start with small capital allocations
-6. Ensure compliance with local regulations
+### 2. DEX Manager
+Handles integration with multiple decentralized exchanges, providing a unified interface for price queries.
 
-## 📄 License
+### 3. Arbitrage Detector
+Scans token prices across DEXes to identify profitable arbitrage opportunities.
 
-This project is provided as-is for educational purposes.
+### 4. Trade Executor
+Executes arbitrage trades when profitable opportunities are detected (requires private key).
 
-## 🤝 Contributing
+## 📊 How It Works
 
-Contributions are welcome! Please read the contributing guidelines before submitting PRs.
+1. **Connection**: Establishes connections to configured blockchain networks
+2. **DEX Initialization**: Sets up connections to multiple DEXes on each network
+3. **Price Monitoring**: Continuously queries token prices across all DEXes
+4. **Opportunity Detection**: Compares prices to identify arbitrage opportunities
+5. **Profit Calculation**: Calculates potential profit after accounting for gas costs
+6. **Execution** (optional): Executes profitable trades automatically
+
+## 🛡️ Security Considerations
+
+- **Never commit your private key** to version control
+- Store private keys in `.env` file (already in `.gitignore`)
+- Start with small trade amounts to test the system
+- Use testnet for initial testing when possible
+- Monitor gas prices to avoid unprofitable trades
+- Review all transactions before enabling automatic execution
 
 ## ⚠️ Disclaimer
 
-This software is provided for educational and research purposes only. Cryptocurrency trading and arbitrage involve substantial risk. Past performance does not guarantee future results. The authors and contributors are not responsible for any financial losses incurred through the use of this software.
+This software is provided for educational purposes only. Cryptocurrency trading carries significant risk. The authors are not responsible for any financial losses incurred through the use of this software. Always:
+
+- Test thoroughly on testnets first
+- Start with small amounts
+- Understand the risks involved
+- Do your own research (DYOR)
+- Never invest more than you can afford to lose
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 🙏 Acknowledgments
+
+- Built with Web3.py for blockchain interactions
+- Supports Uniswap V2 compatible DEXes
+- Inspired by the DeFi arbitrage community
 
 ## 📞 Support
 
-For questions and support, please open an issue on GitHub.
+For questions, issues, or suggestions, please open an issue on GitHub.
+
+---
+
+**Happy Trading! 🚀**

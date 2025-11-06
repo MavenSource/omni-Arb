@@ -20,11 +20,10 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+# Virtual Environment
 venv/
 ENV/
 env/
-.venv
 
 # IDE
 .vscode/
@@ -33,43 +32,28 @@ env/
 *.swo
 *~
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Models
-models/*.h5
-models/*.pkl
-models/*.pt
+# Environment variables
+.env
+.env.local
 
 # Logs
 *.log
 logs/
 
-# Environment variables
-.env
-.env.local
-
-# Node
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Rust
-target/
-Cargo.lock
-
 # Database
 *.db
 *.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Temporary files
 tmp/
 temp/
 *.tmp
-
-# OS
-.DS_Store
-Thumbs.db

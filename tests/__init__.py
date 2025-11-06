@@ -1,3 +1,1 @@
-"""
-Init file for tests package
-"""
+"""Test package"""
