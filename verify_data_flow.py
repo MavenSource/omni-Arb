@@ -7,8 +7,8 @@ Demonstrates the complete data flow from DEX intake to transaction broadcasting
 import sys
 import os
 
-# Add parent directory to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add parent directory to path for imports when running from root
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
 from tests.test_data_flow_integration import test_complete_data_flow
 

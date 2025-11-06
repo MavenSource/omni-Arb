@@ -8,7 +8,7 @@ import os
 from unittest.mock import Mock, MagicMock, patch
 from typing import List, Tuple
 
-# Add parent directory to path
+# Add parent directory to path for imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.dex.base_dex import BaseDEX
@@ -17,6 +17,10 @@ from src.dex.dex_manager import DEXManager
 from src.core.arbitrage import ArbitrageDetector, ArbitrageOpportunity
 from src.core.executor import TradeExecutor
 from src.utils.web3_utils import to_wei, from_wei
+
+
+# Test constants
+MOCK_PRIVATE_KEY = '0x' + 'a' * 64  # Mock private key for testing
 
 
 class TestDataFlowIntegration:
@@ -99,7 +103,8 @@ class TestDataFlowIntegration:
         
         print(f"✅ Successfully fetched {len(prices)} price quotes from DEXes")
         for dex_name, price in prices:
-            print(f"   {dex_name}: {from_wei(price, 'ether'):.6f} USDC per ETH")
+            # Note: Using 'ether' for formatting 18-decimal token amounts (standard ERC20)
+            print(f"   {dex_name}: {from_wei(price, 'ether'):.6f} tokens")
         
         return prices, dex_manager, weth, usdc, amount_in
     
@@ -137,8 +142,9 @@ class TestDataFlowIntegration:
         print(f"✅ Detected {len(opportunities)} arbitrage opportunities")
         for i, opp in enumerate(opportunities[:3]):  # Show top 3
             print(f"   Opportunity #{i+1}:")
-            print(f"     Buy on {opp.buy_dex} @ {from_wei(opp.buy_price, 'ether'):.6f}")
-            print(f"     Sell on {opp.sell_dex} @ {from_wei(opp.sell_price, 'ether'):.6f}")
+            # Note: Using 'ether' for formatting 18-decimal token amounts
+            print(f"     Buy on {opp.buy_dex} @ {from_wei(opp.buy_price, 'ether'):.6f} tokens")
+            print(f"     Sell on {opp.sell_dex} @ {from_wei(opp.sell_price, 'ether'):.6f} tokens")
             print(f"     Profit: {opp.profit_percentage:.4f}%")
         
         return opportunities
@@ -154,7 +160,7 @@ class TestDataFlowIntegration:
         print("="*70)
         
         # Setup executor with mock private key
-        executor = TradeExecutor(mock_w3, "0x" + "a" * 64)  # Mock private key
+        executor = TradeExecutor(mock_w3, MOCK_PRIVATE_KEY)
         
         # Select best opportunity
         best_opportunity = opportunities[0]
@@ -291,9 +297,9 @@ class TestDataFlowIntegration:
         assert opp.profit == expected_profit, "Profit calculation should be correct"
         
         print(f"✅ Data integrity verified across all stages")
-        print(f"   Input preserved: amount={from_wei(opp.amount_in, 'ether')} ETH")
-        print(f"   Prices preserved: buy={from_wei(opp.buy_price, 'ether')}, sell={from_wei(opp.sell_price, 'ether')}")
-        print(f"   Profit calculated correctly: {from_wei(opp.profit, 'ether')} ETH")
+        print(f"   Input preserved: amount={from_wei(opp.amount_in, 'ether')} tokens")
+        print(f"   Prices preserved: buy={from_wei(opp.buy_price, 'ether'):.0f}, sell={from_wei(opp.sell_price, 'ether'):.0f}")
+        print(f"   Profit calculated correctly: {from_wei(opp.profit, 'ether'):.0f} tokens")
         
         return True
 
