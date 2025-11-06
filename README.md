@@ -131,6 +131,24 @@ Execute the test suite to verify the system:
 python tests/run_tests.py
 ```
 
+### Verifying Data Flow
+
+Run the complete data flow verification from DEX data intake to blockchain transaction broadcasting:
+
+```bash
+python verify_data_flow.py
+```
+
+This demonstrates and tests the complete pipeline:
+- DEX data intake from multiple sources
+- Arbitrage opportunity detection
+- Transaction preparation with gas estimation
+- Profitability verification
+- Transaction broadcasting simulation
+- Data integrity validation
+
+See [DATA_FLOW_VERIFICATION.md](DATA_FLOW_VERIFICATION.md) for detailed documentation.
+
 ## 🏗️ Project Structure
 
 ```
