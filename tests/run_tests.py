@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 # Import test modules
 from tests import test_config
 from tests import test_utils
+from tests import test_data_flow_integration
 
 
 def run_all_tests():
@@ -44,6 +45,16 @@ def run_all_tests():
         test_utils.test_is_address()
     except Exception as e:
         print(f"❌ Utility tests failed: {e}")
+        failed = True
+    print()
+    
+    # Run data flow integration test
+    print("Data Flow Integration Test")
+    print("-" * 60)
+    try:
+        test_data_flow_integration.test_complete_data_flow()
+    except Exception as e:
+        print(f"❌ Data flow integration test failed: {e}")
         failed = True
     print()
     
