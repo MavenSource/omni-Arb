@@ -1,7 +1,8 @@
 """
-Arbitrage opportunity detection
+Arbitrage opportunity detection with multi-hop and async support
 """
 
+import asyncio
 from typing import Optional, List, Tuple, Dict
 from dataclasses import dataclass
 from src.utils.logger import logger
@@ -139,3 +140,38 @@ class ArbitrageDetector:
         all_opportunities.sort(key=lambda x: x.profit_percentage, reverse=True)
         
         return all_opportunities
+    
+    async def find_opportunities_async(self) -> List[Dict]:
+        """
+        Async method to find arbitrage opportunities
+        Used by strategy engine integration
+        
+        Returns:
+            List of opportunity dictionaries
+        """
+        try:
+            # Get available token pairs from DEX manager
+            token_pairs = self.dex_manager.get_common_pairs()
+            amount_in = 1000000000000000000  # 1 ETH/token equivalent
+            
+            opportunities = self.scan_token_pairs(token_pairs, amount_in)
+            
+            # Convert to dictionary format for strategy engine
+            result = []
+            for opp in opportunities:
+                result.append({
+                    'buy_dex': opp.buy_dex,
+                    'sell_dex': opp.sell_dex,
+                    'token_in': opp.token_in,
+                    'token_out': opp.token_out,
+                    'amount': opp.amount_in,
+                    'profit': float(from_wei(opp.profit)),
+                    'profit_percentage': opp.profit_percentage,
+                    'gas_cost': 10.0  # Estimate
+                })
+            
+            return result
+        
+        except Exception as e:
+            logger.error(f"Error in async opportunity search: {e}")
+            return []

@@ -119,3 +119,65 @@ class DEXManager:
         """
         prices = self.compare_prices(token_in, token_out, amount_in)
         return prices[0] if prices else None
+    
+    def get_available_tokens(self) -> List[str]:
+        """
+        Get list of available tokens from configuration
+        
+        Returns:
+            List of token addresses
+        """
+        # Get tokens from config, or return common tokens
+        common_tokens = config.get('common_tokens', [])
+        if common_tokens:
+            return common_tokens
+        
+        # Return default common tokens if not configured
+        if self.network == 'ethereum':
+            return [
+                '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',  # WETH
+                '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',  # USDC
+                '0xdAC17F958D2ee523a2206206994597C13D831ec7',  # USDT
+                '0x6B175474E89094C44Da98b954EedeAC495271d0F',  # DAI
+            ]
+        elif self.network == 'polygon':
+            return [
+                '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',  # WMATIC
+                '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',  # USDC
+                '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',  # USDT
+                '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',  # WETH
+            ]
+        elif self.network == 'bsc':
+            return [
+                '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',  # WBNB
+                '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',  # USDC
+                '0x55d398326f99059fF775485246999027B3197955',  # USDT
+                '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',  # ETH
+            ]
+        return []
+    
+    def get_available_dexes(self) -> List[str]:
+        """
+        Get list of available DEX names
+        
+        Returns:
+            List of DEX names
+        """
+        return list(self.dexes.keys())
+    
+    def get_common_pairs(self) -> List[Tuple[str, str]]:
+        """
+        Get common trading pairs for the network
+        
+        Returns:
+            List of (token_in, token_out) tuples
+        """
+        tokens = self.get_available_tokens()
+        pairs = []
+        
+        # Create pairs from available tokens
+        for i, token1 in enumerate(tokens):
+            for token2 in tokens[i+1:]:
+                pairs.append((token1, token2))
+        
+        return pairs
