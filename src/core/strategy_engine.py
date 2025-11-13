@@ -35,6 +35,10 @@ class OpportunitySignal:
     net_profit: Decimal
     data: Dict[str, Any]
     timestamp: datetime
+    
+    def __hash__(self):
+        """Make hashable for use as dict key"""
+        return hash((self.strategy.value, str(self.timestamp), float(self.net_profit)))
 
 
 class OmniStrategyEngine:
