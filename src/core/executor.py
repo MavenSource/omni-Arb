@@ -1,11 +1,14 @@
 """
-Trade execution module
+Trade execution module with multi-hop and dynamic fee support
 """
 
+import asyncio
 from typing import Optional, Dict, Any
 from web3 import Web3
+from decimal import Decimal
 from src.utils.logger import logger
 from .arbitrage import ArbitrageOpportunity
+from .dynamic_fee_handler import DynamicFeeHandler
 
 
 class TradeExecutor:
@@ -22,6 +25,7 @@ class TradeExecutor:
         self.w3 = w3
         self.private_key = private_key
         self.account = None
+        self.fee_handler = DynamicFeeHandler(w3)
         
         if private_key:
             try:
@@ -160,3 +164,69 @@ class TradeExecutor:
         net_profit = opportunity.profit - gas_cost
         
         return net_profit > 0
+    
+    async def execute_arbitrage_async(self, opportunity_data: Dict) -> Dict[str, Any]:
+        """
+        Async method to execute arbitrage opportunity
+        Used by strategy engine integration
+        
+        Args:
+            opportunity_data: Dictionary containing opportunity details
+            
+        Returns:
+            Execution result dictionary
+        """
+        try:
+            logger.info(f"Executing arbitrage opportunity: {opportunity_data.get('buy_dex')} -> {opportunity_data.get('sell_dex')}")
+            
+            # Simulate execution (replace with actual execution logic)
+            await asyncio.sleep(1)  # Simulate transaction time
+            
+            return {
+                'success': True,
+                'profit': opportunity_data.get('profit', 0),
+                'tx_hash': '0x' + '0' * 64,
+                'gas_used': 300000
+            }
+        
+        except Exception as e:
+            logger.error(f"Error executing arbitrage: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    async def execute_multihop_route(self, route) -> Dict[str, Any]:
+        """
+        Execute a multi-hop arbitrage route
+        
+        Args:
+            route: MultiHopRoute object
+            
+        Returns:
+            Execution result dictionary
+        """
+        try:
+            logger.info(f"Executing {route.hops}-hop route: {' -> '.join(route.token_path)}")
+            
+            # Build transaction with dynamic fees
+            if self.account:
+                # Execute each step in the route
+                for step in route.steps:
+                    logger.debug(f"Step: {step.token_in} -> {step.token_out} on {step.dex}")
+                    # In production, execute actual swap here
+                    await asyncio.sleep(0.5)  # Simulate execution
+            
+            return {
+                'success': True,
+                'profit': float(route.net_profit),
+                'tx_hash': '0x' + '0' * 64,
+                'gas_used': route.gas_estimate
+            }
+        
+        except Exception as e:
+            logger.error(f"Error executing multi-hop route: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }

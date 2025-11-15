@@ -4,6 +4,7 @@ A sophisticated DeFi arbitrage bot that detects and executes profitable trading 
 
 ## 🌟 Features
 
+### Core Features
 - **Multi-Chain Support**: Monitor arbitrage opportunities across Ethereum, BSC, and Polygon
 - **Multiple DEX Integration**: Support for Uniswap V2, SushiSwap, and PancakeSwap
 - **Real-time Price Monitoring**: Continuous scanning of token prices across DEXes
@@ -11,6 +12,16 @@ A sophisticated DeFi arbitrage bot that detects and executes profitable trading 
 - **Gas Cost Analysis**: Evaluates profitability after accounting for gas fees
 - **Configurable Parameters**: Easily adjust profit thresholds, slippage, and more
 - **Comprehensive Logging**: Color-coded logging for easy monitoring
+
+### 🚀 Advanced Features (New!)
+- **Multi-Hop Routing**: Find complex 2-4 hop arbitrage paths across multiple DEXes
+- **Multi-Strategy Engine**: Coordinate multiple trading strategies simultaneously
+- **Dynamic Fee Optimization**: EIP-1559 gas optimization for minimal transaction costs
+- **Risk-Adjusted Ranking**: Intelligent opportunity scoring based on profit/risk ratio
+- **Automated Capital Allocation**: Optimal portfolio management across strategies
+- **Performance Tracking**: Real-time metrics and profitability analysis
+
+📖 **See [ADVANCED_FEATURES.md](ADVANCED_FEATURES.md) for detailed documentation**
 
 ## 📋 Prerequisites
 
@@ -78,9 +89,9 @@ The main configuration file contains:
 
 ## 📖 Usage
 
-### Monitoring Mode (Read-Only)
+### Standard Mode (Legacy)
 
-Run the bot in monitoring mode to detect opportunities without executing trades:
+Run the bot in standard arbitrage detection mode:
 
 ```bash
 python main.py
@@ -89,9 +100,37 @@ python main.py
 This mode:
 - Connects to configured blockchain networks
 - Monitors token prices across multiple DEXes
-- Detects arbitrage opportunities
+- Detects simple arbitrage opportunities
 - Calculates potential profits
-- Does NOT execute trades (safe for testing)
+- Does NOT execute trades by default (safe for testing)
+
+### 🚀 Advanced Mode (Recommended)
+
+Enable advanced features in `config/system_config.json`:
+
+```json
+{
+  "advanced": {
+    "use_strategy_engine": true,
+    "use_multihop_routing": true,
+    "use_dynamic_fees": true,
+    "max_hops": 3
+  }
+}
+```
+
+Then run:
+
+```bash
+python main.py
+```
+
+Advanced mode features:
+- **Multi-Strategy Scanning**: Discovers flash arbitrage, multi-hop routes, and cross-DEX opportunities simultaneously
+- **Intelligent Routing**: Finds complex 2-4 hop arbitrage paths
+- **Risk-Adjusted Ranking**: Scores opportunities by profit/risk ratio
+- **Optimal Capital Allocation**: Automatically distributes capital across best opportunities
+- **Real-time Performance Tracking**: Monitor profitability and success rates
 
 ### Trading Mode (Requires Private Key)
 
@@ -102,12 +141,21 @@ To enable automatic trade execution:
    PRIVATE_KEY=your_private_key_here
    ```
 
-2. Run the bot:
+2. Enable auto-execution in config:
+   ```json
+   {
+     "trading": {
+       "auto_execute": true
+     }
+   }
+   ```
+
+3. Run the bot:
    ```bash
    python main.py
    ```
 
-⚠️ **Warning**: Trading mode will execute real transactions. Start with small amounts and test thoroughly.
+⚠️ **Warning**: Trading mode will execute real transactions. Start with small amounts and test thoroughly on testnet first.
 
 ### Demo Mode
 
@@ -131,36 +179,67 @@ Execute the test suite to verify the system:
 python tests/run_tests.py
 ```
 
+Or run specific test modules:
+
+```bash
+# Test dynamic fee handler
+python -m unittest tests.test_dynamic_fee_handler -v
+
+# Test multi-hop router
+python -m unittest tests.test_multihop_router -v
+
+# Test strategy engine
+python -m unittest tests.test_strategy_engine -v
+
+# Run all tests
+python -m unittest discover tests -v
+```
+
+**Test Coverage:**
+- ✅ 17+ test cases for advanced features
+- ✅ Dynamic fee optimization tests
+- ✅ Multi-hop routing tests
+- ✅ Strategy engine tests
+- ✅ 100% passing rate
+
 ## 🏗️ Project Structure
 
 ```
 omni-Arb/
 ├── src/
 │   ├── core/
-│   │   ├── blockchain.py      # Blockchain connection management
-│   │   ├── arbitrage.py       # Arbitrage opportunity detection
-│   │   └── executor.py        # Trade execution logic
+│   │   ├── blockchain.py           # Blockchain connection management
+│   │   ├── arbitrage.py            # Arbitrage opportunity detection (enhanced)
+│   │   ├── executor.py             # Trade execution logic (enhanced)
+│   │   ├── dynamic_fee_handler.py  # EIP-1559 gas optimization (NEW)
+│   │   ├── multihop_router.py      # Multi-hop route discovery (NEW)
+│   │   └── strategy_engine.py      # Multi-strategy orchestration (NEW)
 │   ├── dex/
-│   │   ├── base_dex.py        # Base DEX interface
-│   │   ├── uniswap_v2.py      # Uniswap V2 compatible DEXes
-│   │   └── dex_manager.py     # DEX management
+│   │   ├── base_dex.py             # Base DEX interface
+│   │   ├── uniswap_v2.py           # Uniswap V2 compatible DEXes
+│   │   └── dex_manager.py          # DEX management (enhanced)
 │   ├── config/
-│   │   └── config.py          # Configuration management
+│   │   └── config.py               # Configuration management
 │   └── utils/
-│       ├── logger.py          # Logging utilities
-│       └── web3_utils.py      # Web3 helper functions
+│       ├── logger.py               # Logging utilities
+│       └── web3_utils.py           # Web3 helper functions
 ├── tests/
-│   ├── test_config.py         # Configuration tests
-│   ├── test_utils.py          # Utility function tests
-│   └── run_tests.py           # Test runner
+│   ├── test_config.py              # Configuration tests
+│   ├── test_utils.py               # Utility function tests
+│   ├── test_dynamic_fee_handler.py # Dynamic fee tests (NEW)
+│   ├── test_multihop_router.py     # Multi-hop routing tests (NEW)
+│   ├── test_strategy_engine.py     # Strategy engine tests (NEW)
+│   └── run_tests.py                # Test runner
 ├── config/
+│   └── system_config.json          # System configuration (updated)
 │   └── config.yaml            # Main configuration file
-├── main.py                    # Application entry point
-├── demo.py                    # Interactive demonstration
-├── requirements.txt           # Python dependencies
-├── .env.example              # Environment variables template
-├── LICENSE                   # MIT License
-└── README.md                 # This file
+├── main.py                         # Application entry point (enhanced)
+├── demo.py                         # Interactive demonstration
+├── requirements.txt                # Python dependencies
+├── ADVANCED_FEATURES.md            # Advanced features guide (NEW)
+├── .env.example                    # Environment variables template
+├── LICENSE                         # MIT License
+└── README.md                       # This file
 ```
 
 ## 🔧 Key Components

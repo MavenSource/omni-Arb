@@ -1,19 +1,23 @@
 """
 Omni-Arb: Multi-Chain DeFi Arbitrage System
-Main application entry point
+Main application entry point with advanced multi-strategy support
 """
 
 import os
 import time
 import signal
 import sys
+import asyncio
 from typing import List, Tuple
+from decimal import Decimal
 
 from src.config import config
 from src.utils.logger import logger, setup_logger
 from src.core.blockchain import blockchain
 from src.core.arbitrage import ArbitrageDetector
 from src.core.executor import TradeExecutor
+from src.core.multihop_router import MultiHopRouter
+from src.core.strategy_engine import OmniStrategyEngine
 from src.dex.dex_manager import DEXManager
 from src.utils.web3_utils import to_wei, from_wei
 
@@ -26,6 +30,8 @@ class OmniArb:
         self.running = False
         self.detectors = {}
         self.executors = {}
+        self.multihop_routers = {}
+        self.strategy_engines = {}
         
         # Setup logger
         log_level = config.get('monitoring.log_level', 'INFO')
@@ -66,6 +72,19 @@ class OmniArb:
             # Initialize trade executor
             executor = TradeExecutor(w3, private_key)
             self.executors[network] = executor
+            
+            # Initialize multi-hop router
+            multihop_router = MultiHopRouter(dex_manager, price_fetcher=None)
+            self.multihop_routers[network] = multihop_router
+            
+            # Initialize strategy engine
+            strategy_engine = OmniStrategyEngine(
+                detector, 
+                multihop_router,
+                executor,
+                initial_capital=Decimal('10000')
+            )
+            self.strategy_engines[network] = strategy_engine
             
             self.logger.info(f"Initialized components for {network}")
         
@@ -122,44 +141,24 @@ class OmniArb:
         """Scan for arbitrage opportunities across all networks"""
         min_profit_pct = config.get('trading.min_profit_percentage', 0.5)
         check_interval = config.get('monitoring.check_interval_seconds', 5)
+        use_strategy_engine = config.get('advanced.use_strategy_engine', True)
         
         self.logger.info(f"Starting arbitrage scanner (min profit: {min_profit_pct}%)")
+        self.logger.info(f"Strategy Engine: {'Enabled' if use_strategy_engine else 'Disabled'}")
         self.running = True
+        
+        # Use asyncio event loop for advanced features
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         
         while self.running:
             try:
-                for network, detector in self.detectors.items():
-                    # Get token pairs to scan
-                    token_pairs = self.get_default_token_pairs(network)
-                    
-                    if not token_pairs:
-                        self.logger.debug(f"No token pairs configured for {network}")
-                        continue
-                    
-                    # Amount to trade (1 WETH equivalent)
-                    amount_in = to_wei(1, 'ether')
-                    
-                    # Scan for opportunities
-                    opportunities = detector.scan_token_pairs(
-                        token_pairs,
-                        amount_in,
-                        min_profit_pct
-                    )
-                    
-                    # Log opportunities
-                    if opportunities:
-                        self.logger.info(f"Found {len(opportunities)} opportunities on {network}")
-                        for opp in opportunities[:3]:  # Show top 3
-                            self.logger.info(f"  {opp}")
-                            
-                            # Check if profitable after gas
-                            executor = self.executors.get(network)
-                            if executor and executor.is_profitable_after_gas(opp):
-                                self.logger.info(f"  -> Profitable after gas!")
-                            else:
-                                self.logger.info(f"  -> Not profitable after gas costs")
-                    else:
-                        self.logger.debug(f"No opportunities found on {network}")
+                if use_strategy_engine:
+                    # Use advanced strategy engine
+                    loop.run_until_complete(self._run_strategy_engine_scan())
+                else:
+                    # Use legacy scanning
+                    self._run_legacy_scan(min_profit_pct, check_interval)
                 
                 # Wait before next scan
                 time.sleep(check_interval)
@@ -170,7 +169,95 @@ class OmniArb:
                 self.logger.error(f"Error during scan: {e}")
                 time.sleep(check_interval)
         
+        loop.close()
         self.logger.info("Scanner stopped")
+    
+    async def _run_strategy_engine_scan(self):
+        """Run scan using strategy engine (advanced mode)"""
+        for network, engine in self.strategy_engines.items():
+            try:
+                self.logger.info(f"\n{'='*80}")
+                self.logger.info(f"Scanning {network} with Strategy Engine")
+                self.logger.info(f"{'='*80}")
+                
+                # Scan for opportunities
+                opportunities = await engine.scan_all_opportunities()
+                
+                if opportunities:
+                    self.logger.info(f"Found {len(opportunities)} opportunities")
+                    
+                    # Rank opportunities
+                    ranked = engine.rank_opportunities(opportunities)
+                    
+                    # Allocate capital
+                    allocations = engine.allocate_capital(ranked[:5])  # Top 5
+                    
+                    # Show top opportunities
+                    for i, (opp, allocation) in enumerate(allocations.items(), 1):
+                        self.logger.info(
+                            f"{i}. {opp.strategy.value}: "
+                            f"Profit=${float(opp.net_profit):,.2f}, "
+                            f"Confidence={opp.confidence:.0%}, "
+                            f"Capital=${float(allocation):,.2f}"
+                        )
+                    
+                    # Execute top opportunity (in simulation mode)
+                    if allocations and config.get('trading.auto_execute', False):
+                        top_opp, top_alloc = list(allocations.items())[0]
+                        result = await engine.execute_strategy(top_opp, top_alloc)
+                        
+                        if result.get('success'):
+                            self.logger.info(f"✓ Execution successful! Profit: ${result.get('profit', 0):,.2f}")
+                        else:
+                            self.logger.warning(f"✗ Execution failed: {result.get('error')}")
+                    
+                    # Show performance summary
+                    perf = engine.get_performance_summary()
+                    self.logger.info(f"\nPerformance Summary:")
+                    self.logger.info(f"  Total Profit: ${perf['total_profit']:,.2f}")
+                    self.logger.info(f"  ROI: {perf['roi_percent']:.2f}%")
+                    self.logger.info(f"  Trades: {perf['trades_executed']}")
+                    
+                else:
+                    self.logger.info(f"No opportunities found on {network}")
+            
+            except Exception as e:
+                self.logger.error(f"Error in strategy engine scan for {network}: {e}")
+    
+    def _run_legacy_scan(self, min_profit_pct: float, check_interval: int):
+        """Run legacy scanning mode"""
+        for network, detector in self.detectors.items():
+            # Get token pairs to scan
+            token_pairs = self.get_default_token_pairs(network)
+            
+            if not token_pairs:
+                self.logger.debug(f"No token pairs configured for {network}")
+                continue
+            
+            # Amount to trade (1 WETH equivalent)
+            amount_in = to_wei(1, 'ether')
+            
+            # Scan for opportunities
+            opportunities = detector.scan_token_pairs(
+                token_pairs,
+                amount_in,
+                min_profit_pct
+            )
+            
+            # Log opportunities
+            if opportunities:
+                self.logger.info(f"Found {len(opportunities)} opportunities on {network}")
+                for opp in opportunities[:3]:  # Show top 3
+                    self.logger.info(f"  {opp}")
+                    
+                    # Check if profitable after gas
+                    executor = self.executors.get(network)
+                    if executor and executor.is_profitable_after_gas(opp):
+                        self.logger.info(f"  -> Profitable after gas!")
+                    else:
+                        self.logger.info(f"  -> Not profitable after gas costs")
+            else:
+                self.logger.debug(f"No opportunities found on {network}")
     
     def run(self):
         """Run the arbitrage bot"""

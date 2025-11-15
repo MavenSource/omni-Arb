@@ -8,6 +8,13 @@
       "integration_layer": "multi_chain"
     }
   },
+  "advanced": {
+    "use_strategy_engine": true,
+    "use_multihop_routing": true,
+    "use_dynamic_fees": true,
+    "max_hops": 3,
+    "enable_mev_protection": false
+  },
   "profit_targets": {
     "daily_target": 33333,
     "weekly_target": 233333,
@@ -17,13 +24,25 @@
     "max_drawdown": 0.05,
     "min_success_rate": 0.95,
     "max_loss_per_trade": 10000,
-    "max_daily_loss": 50000
+    "max_daily_loss": 50000,
+    "max_position_size_percent": 20,
+    "max_strategy_allocation_percent": 30
+  },
+  "trading": {
+    "auto_execute": false,
+    "min_profit_percentage": 0.5,
+    "min_profit_usd": 50,
+    "max_slippage_bps": 50
   },
   "execution": {
     "max_execution_time_ms": 100,
     "min_profit_threshold": 1000,
     "min_success_probability": 0.85,
     "min_gas_roi": 5
+  },
+  "monitoring": {
+    "log_level": "INFO",
+    "check_interval_seconds": 5
   },
   "chains": {
     "ethereum": {
@@ -59,6 +78,10 @@
     "compound": {
       "enabled": true,
       "fee": 0.0005
+    },
+    "balancer": {
+      "enabled": true,
+      "fee": 0.0000
     }
   },
   "infrastructure": {
